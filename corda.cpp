@@ -9,7 +9,6 @@ using namespace std;
 
 char ch; //current pressed character
 int i = 0; //global incrementor
-INPUT ip; //text simulation handle.
 string path; //path to %localappdata%
 ifstream fin; //^^^^^^^^^^^^^^^^^^^^^
 struct{
@@ -29,23 +28,27 @@ int KeyPress(char ch){
 #define KeyToggle(x) GetKeyState(x)>0
 
 //FINALLY MANAGED AT LEAST SOMETHING WITH CHORDS
-//Visually unappeling, but gets the job done.
+//currently struggling with chords that have the same keys 
 void Input(char ch[40], char str[200]){
     int keystate = 0;
     for(int i=1;KeyPress(ch[i-1]) && i<=strlen(ch);i++){
-        if(i == strlen(ch)){
-            ip.ki.wVk = VK_BACK;
-            for(int j=0;j<strlen(ch);j++){
-                SendInput(1, &ip, sizeof(INPUT));
-                Sleep(50);
+        if(i == strlen(ch) && KeyPress(VK_TAB)){
+            INPUT ip[strlen(str)];
+            for(int j=0;j<strlen(ch)+1;j++){
+            	ip[j].type = INPUT_KEYBOARD;
+            	ip[j].ki.dwFlags = KEYEVENTF_UNICODE;
+            	ip[j].ki.wVk = VK_BACK;
             }
-            ip.ki.wVk = 0;
+            SendInput(strlen(ch)+1, ip, sizeof(INPUT));
             for(int j=0;j<strlen(str);j++){
-                ip.ki.wScan = str[j];
-                SendInput(1, &ip, sizeof(INPUT));
+            	ip[j].type = INPUT_KEYBOARD;
+            	ip[j].ki.dwFlags = KEYEVENTF_UNICODE;
+            	ip[j].ki.wVk = 0;
+                ip[j].ki.wScan = str[j];
             }
-            ip.ki.wScan = ' ';
-            SendInput(1, &ip, sizeof(INPUT));
+            SendInput(strlen(str), ip, sizeof(INPUT));
+            ip[0].ki.wScan = ' ';
+            SendInput(1, &ip[0], sizeof(INPUT));
             keystate = 1;
         }
     }
@@ -59,8 +62,6 @@ void Input(char ch[40], char str[200]){
 }
 
 int main(int argc, char ** argv){
-    ip.type = INPUT_KEYBOARD;
-    ip.ki.dwFlags = KEYEVENTF_UNICODE;
     if(argc > 1){
         cout << "The program has started.\n";
         cout << "Press INSERT to toggle on/off.\n";
@@ -78,12 +79,17 @@ int main(int argc, char ** argv){
             fin.get();
         }
         while(1){
-            for(int j=0;j<i && KeyToggle(VK_INSERT);j++){
+            for(int j=0;j<i;j++){
                 // cout << f[j].ch << "\t" << f[j].str << "\n";
-                // getch();
+                if(KeyPress(VK_TAB)) cout << "asdf\n";
                 Input(f[j].ch, f[j].str);
             }
+            Sleep(10); //fixes performance issues, deleting this results in 100% cpu usage.
+			//i am aware that the more complex a txt file becomes, the less responsive the app will feel.
+			//but i can't do anything about it.
         }
     }
     return 0;
 }
+//ISSUSE: same lettered chords dont work
+//fixed 100% cpu usage when idle, although it will still go up if a chord is pressed
