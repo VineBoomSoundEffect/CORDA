@@ -1,5 +1,5 @@
 # CORDA
-A software for writing word by word, not letter by letter
+A software for writing words instead of letters
 ## KEEP IN MIND
 #### The software is still in developement, also I currently don't accept pull requests.
 ## What is Corda?
