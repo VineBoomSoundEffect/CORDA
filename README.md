@@ -19,6 +19,7 @@ You can run Corda by downloading the `.exe` file. In the terminal, type `corda [
 You will be greeted with the message:<br>
 `The program has started.`<br>
 `Press INSERT to toggle on/off.`<br>
-By default, Corda is off. You just have to press INSERT on your keyboard, and you're good to go!
+**I forgot to update it so just ignore the insert part for now**<br>
+Make a chord by typing the letters of the chord at the same time, together with a TAB.
 ## Do I have to MAKE the dictionaries?
 For now, yes. I will try to post some dictionaries soon. Don't forget that this is only an early developement stage, so there is not too much to expect.
