@@ -32,11 +32,11 @@ int KeyPress(char ch){
 void Input(char ch[40], char str[200]){
     int keystate = 0;
     for(int i=1;KeyPress(ch[i-1]) && i<=strlen(ch);i++){
-        if(i == strlen(ch) && KeyPress(VK_TAB)){
+        if(i == strlen(ch) && GetAsyncKeyState(VkKeyScan('`')) || GetAsyncKeyState(VkKeyScan('~'))){
             INPUT ip[strlen(str)];
             for(int j=0;j<strlen(ch)+1;j++){
             	ip[j].type = INPUT_KEYBOARD;
-            	ip[j].ki.dwFlags = KEYEVENTF_UNICODE;
+            	ip[j].ki.dwFlags = 0;
             	ip[j].ki.wVk = VK_BACK;
             }
             SendInput(strlen(ch)+1, ip, sizeof(INPUT));
@@ -64,7 +64,6 @@ void Input(char ch[40], char str[200]){
 int main(int argc, char ** argv){
     if(argc > 1){
         cout << "The program has started.\n";
-        cout << "Press INSERT to toggle on/off.\n";
         //messy std::string stuff to read from %localappdata%
         path = getenv("localappdata");
         path += "\\corda\\";
@@ -80,7 +79,6 @@ int main(int argc, char ** argv){
         }
         while(1){
             for(int j=0;j<i;j++){
-                // cout << f[j].ch << "\t" << f[j].str << "\n";
                 if(KeyPress(VK_TAB)) cout << "asdf\n";
                 Input(f[j].ch, f[j].str);
             }
