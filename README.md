@@ -1,7 +1,7 @@
 # CORDA
 A software for writing words instead of letters
 ## KEEP IN MIND
-#### The software is still in developement, also I currently don't accept pull requests.
+#### The software is still in developement!
 ## What is Corda?
 Corda is a software that allows you to chord keys on your keyboard to make words, similar to stenography, except it uses all the keys on your keyboard.
 ## How does it work?
