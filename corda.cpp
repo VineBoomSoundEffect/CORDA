@@ -36,10 +36,10 @@ int main(int argc, char ** argv){
 		}
 		while(1){
 			//loop through each chord-output pair
-			for(int i=0;i<k && GetAsyncKeyState(VkKeyScan('`'));i++){
+			for(int i=0;i<k;i++){
 				int keystate = 0;
 				for(int j=1;j<=strlen(f[i].ch) && GetAsyncKeyState(VkKeyScan(f[i].ch[j-1]));j++){
-					if(j == strlen(f[i].ch)){
+					if(j == strlen(f[i].ch) && GetAsyncKeyState(VkKeyScan('`'))){
 						INPUT ip[strlen(f[i].str)];
 						//delete the characters from the chord
 						for(int l=0;l<=strlen(f[i].ch);l++){
@@ -55,11 +55,14 @@ int main(int argc, char ** argv){
 							ip[l].ki.dwFlags = KEYEVENTF_UNICODE;
 							ip[l].ki.wVk = 0;
 							ip[l].ki.wScan = f[i].str[l];
+							if(ip[l].ki.wScan == 'R') ip[l].ki.wScan = 10;
 						}
 						SendInput(strlen(f[i].str), ip, sizeof(INPUT));
-						//then add a space 
-						ip[0].ki.wScan = ' ';
-						SendInput(1, &ip[0], sizeof(INPUT));
+						//then add a space (if the last letter is not R)
+						if(f[i].str[strlen(f[i].str)-1] != 'R'){
+							ip[0].ki.wScan = ' ';
+							SendInput(1, &ip[0], sizeof(INPUT));
+						}
 						keystate = 1;
 					}
 				}
@@ -68,6 +71,7 @@ int main(int argc, char ** argv){
 					for(int j=1;j<=strlen(f[i].ch) && !GetAsyncKeyState(VkKeyScan(f[i].ch[j-1]));j++){
 						if(j == strlen(f[i].ch)) keystate = 0;
 					}
+					Sleep(10); //for better performance, otherwise the cpu is spiking at 100% whenever a chord is typed
 				}
 			}
 			Sleep(10); //for better performance, otherwise the cpu is always at 100%
