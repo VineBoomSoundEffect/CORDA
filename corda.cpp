@@ -38,34 +38,39 @@ int main(int argc, char ** argv){
 			//loop through each chord-output pair
 			for(int i=0;i<k;i++){
 				int keystate = 0;
+                //another for-if pair seems to fix the chording problem
 				for(int j=1;j<=strlen(f[i].ch) && GetAsyncKeyState(VkKeyScan(f[i].ch[j-1]));j++){
 					if(j == strlen(f[i].ch) && GetAsyncKeyState(VkKeyScan('`'))){
-						INPUT ip[strlen(f[i].str)];
-						//delete the characters from the chord
-						for(int l=0;l<=strlen(f[i].ch);l++){
-							ip[l].type = INPUT_KEYBOARD;
-							ip[l].ki.dwFlags = KEYEVENTF_UNICODE;
-							ip[l].ki.wVk = 0;
-							ip[l].ki.wScan = 8;
-						}
-						//then, simulate the output
-						SendInput(strlen(f[i].ch)+1, ip, sizeof(INPUT));
-						for(int l=0;l<strlen(f[i].str);l++){
-							ip[l].type = INPUT_KEYBOARD;
-							ip[l].ki.dwFlags = KEYEVENTF_UNICODE;
-							ip[l].ki.wVk = 0;
-							ip[l].ki.wScan = f[i].str[l];
-							if(ip[l].ki.wScan == 'R') ip[l].ki.wScan = 10;
-						}
-						SendInput(strlen(f[i].str), ip, sizeof(INPUT));
-						//then add a space (if the last letter is not R)
-						if(f[i].str[strlen(f[i].str)-1] != 'R'){
-							ip[0].ki.wScan = ' ';
-							SendInput(1, &ip[0], sizeof(INPUT));
-						}
-						keystate = 1;
-					}
-				}
+                        for(int j=1;j<=strlen(f[i].ch) && GetAsyncKeyState(VkKeyScan(f[i].ch[j-1]));j++){
+					        if(j == strlen(f[i].ch) && GetAsyncKeyState(VkKeyScan('`'))){
+                                INPUT ip[strlen(f[i].str)];
+                                //delete the characters from the chord
+                                for(int l=0;l<=strlen(f[i].ch);l++){
+                                    ip[l].type = INPUT_KEYBOARD;
+                                    ip[l].ki.dwFlags = KEYEVENTF_UNICODE;
+                                    ip[l].ki.wVk = VK_BACK;
+                                    // ip[l].ki.wScan = 8; //i hate inconsistency
+                                }
+                                SendInput(strlen(f[i].ch)+1, ip, sizeof(INPUT));
+                                //then, simulate the output
+                                for(int l=0;l<strlen(f[i].str);l++){
+                                    ip[l].type = INPUT_KEYBOARD;
+                                    ip[l].ki.dwFlags = KEYEVENTF_UNICODE;
+                                    ip[l].ki.wVk = 0;
+                                    ip[l].ki.wScan = f[i].str[l];
+                                    if(ip[l].ki.wScan == 'R') ip[l].ki.wScan = 10;
+                                }
+                                SendInput(strlen(f[i].str), ip, sizeof(INPUT));
+                                //then add a space (if the last letter is not R)
+                                if(f[i].str[strlen(f[i].str)-1] != 'R'){
+                                    ip[0].ki.wScan = ' ';
+                                    SendInput(1, &ip[0], sizeof(INPUT));
+                                }
+                                keystate = 1;
+					        }
+				        }
+                    }
+                }
 				//wait until all keys have been unpressed
 				while(keystate){
 					for(int j=1;j<=strlen(f[i].ch) && !GetAsyncKeyState(VkKeyScan(f[i].ch[j-1]));j++){
